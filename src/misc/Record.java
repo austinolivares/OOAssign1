@@ -6,14 +6,7 @@ public class Record {
 	private int age;
 	private String employeeType;
 	private double payRate;
-
-/*public Record(String firstName, String lastName, int age, String employeeType, double payRate){
-	this.setFirstName(firstName);
-	this.setLastName(lastName);
-	this.setAge(age);
-	this.setEmployeeType(employeeType);
-	this.setPayRate(payRate);
-}*/
+	
 	public Record(){
 		
 	}
