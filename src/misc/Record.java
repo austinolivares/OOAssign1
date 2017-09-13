@@ -7,8 +7,7 @@ public class Record {
 	private String employeeType;
 	private double payRate;
 	
-	public Record(){
-		
+	public Record(){	
 	}
 
 	public String getFirstName() {
