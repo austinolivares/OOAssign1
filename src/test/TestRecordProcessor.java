@@ -25,16 +25,16 @@ public class TestRecordProcessor {
 
 	@Test
 	public void testFileData1() {
-		assertEquals(expectedFromData1, RecordProcessor.processFile("data1.txt"));
+		assertEquals(expectedFromData1, RecordProcessor.printEmployeesStats("data1.txt"));
 	}
 
 	@Test
 	public void testFileData2() {
-		assertEquals(null, RecordProcessor.processFile("data2.txt"));
+		assertEquals(null, RecordProcessor.printEmployeesStats("data2.txt"));
 	}
 
 	@Test
 	public void testFileData3() {
-		assertEquals(null, RecordProcessor.processFile("data3.txt"));
+		assertEquals(null, RecordProcessor.printEmployeesStats("data3.txt"));
 	}
 }

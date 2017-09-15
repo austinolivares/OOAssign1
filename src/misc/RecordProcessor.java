@@ -18,6 +18,8 @@ public class RecordProcessor {
 	private static int numberOfSalariedEmployees = 0;
 	private static double sumOfSalary = 0;
 	private static int numberOfRecords = 0;
+	private static int recordNumber = 0;
+	private static String[] parsedRecord;
 
 	public static Scanner openScanner(String fileName){
 		Scanner scanner;
@@ -49,7 +51,38 @@ public class RecordProcessor {
 		}
 	}
 	
-	public static void setPreviousRecord(int recordNumber, int i){
+	public static int createEmployeeRecord() throws Exception{
+		while (scanner.hasNextLine()) {
+			String recordString = scanner.nextLine();
+			if (recordString.length() > 0) {
+				int i = parseRecord(recordString);
+				
+				if(setEmployeeInfo(records[i], parsedRecord) == false)
+					throw new Exception();
+				
+				recordNumber++;
+			}
+		}
+		return recordNumber;
+	}
+	
+	public static int parseRecord(String recordString){
+		parsedRecord = recordString.split(",");
+
+		int i = 0;
+		for (; i < records.length; i++) {
+			if (records[i].getLastName() == null)
+				break;
+
+			if (records[i].getLastName().compareTo(parsedRecord[1]) > 0) {
+				pushRecordBack(i);
+				break;
+			}
+		}
+		return i;
+	}
+	
+	public static void pushRecordBack(int i){
 		for (int j = recordNumber; j > i; j--) {
 			records[j].setFirstName(records[j - 1].getFirstName());
 			records[j].setLastName(records[j - 1].getLastName());
@@ -105,7 +138,7 @@ public class RecordProcessor {
 		}
 	}
 	
-	public static void calculateSumAndNumber(int recordNumber){
+	public static void calculateSumAndNumber(){
 		sumOfAges += records[recordNumber].getAge();
 		if (records[recordNumber].getEmployeeType().equals("Commission")) {
 			sumOfCommissions += records[recordNumber].getPayRate();
@@ -144,13 +177,13 @@ public class RecordProcessor {
 		printNameOccurrence(numberOfLastNameOccurrences, "last");
 	}
 	
-	public static HashMap<String, Integer> addToHashMap(HashMap<String, Integer> hashmap, String name){
-		if (hashmap.containsKey(name)) {
-			hashmap.put(name, hashmap.get(name) + 1);
+	public static HashMap<String, Integer> addToHashMap(HashMap<String, Integer> numberOfNameOccurrences, String name){
+		if (numberOfNameOccurrences.containsKey(name)) {
+			numberOfNameOccurrences.put(name, numberOfNameOccurrences.get(name) + 1);
 		} else {
-			hashmap.put(name, 1);
+			numberOfNameOccurrences.put(name, 1);
 		}
-		return hashmap;
+		return numberOfNameOccurrences;
 	}
 	
 	public static void printNameOccurrence(HashMap<String, Integer> numberOfNameOccurrences, String typeOfName){
@@ -182,34 +215,14 @@ public class RecordProcessor {
 		}
 	}
 	
-	public static String processFile(String fileName) {
-
+	public static String printEmployeesStats(String fileName) {
 		scanner = openScanner(fileName);
 		initializeRecords(fileName);
 
-		int recordNumber = 0;
-		while (scanner.hasNextLine()) {
-			String recordString = scanner.nextLine();
-			if (recordString.length() > 0) {
-
-				String[] parsedRecord = recordString.split(",");
-
-				int c2 = 0;
-				for (; c2 < records.length; c2++) {
-					if (records[c2].getLastName() == null)
-						break;
-
-					if (records[c2].getLastName().compareTo(parsedRecord[1]) > 0) {
-						setPreviousRecord(recordNumber, c2);
-						break;
-					}
-				}
-
-				if(setEmployeeInfo(records[c2], parsedRecord) == false)
-					return null;
-
-				recordNumber++;
-			}
+		try {
+			recordNumber = createEmployeeRecord();
+		} catch (Exception e) {
+			return null;
 		}
 			
 		if(noRecordsInFile())
@@ -218,12 +231,14 @@ public class RecordProcessor {
 		printHeader(outputString);
 
 		for (int i = 0; i < records.length; i++) {
-			calculateSumAndNumber(i);
+			recordNumber = i;
+			calculateSumAndNumber();
 		}
 
 		printAverages();
 		createHashMap();
 		scanner.close();
 		return outputString.toString();
-	}
+	}	
 }
+
